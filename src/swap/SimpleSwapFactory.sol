@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.30;
 
 import {ERC20SimpleSwap} from "./ERC20SimpleSwap.sol";
 import {LibClone} from "solady/utils/LibClone.sol";

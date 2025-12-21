@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.30;
 
 import {ECDSA} from "solady/utils/ECDSA.sol";
 import {FixedPointMathLib} from "solady/utils/FixedPointMathLib.sol";
