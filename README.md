@@ -1,49 +1,66 @@
 # Swarm Smart Contracts
 
-Unified Solidity contracts for Ethereum Swarm, combining the storage incentives and swap payment channel systems.
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.30-363636.svg)](https://soliditylang.org/)
+[![Foundry](https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg)](https://getfoundry.sh/)
 
-## Overview
+Unified Solidity smart contracts for [Ethereum Swarm](https://www.ethswarm.org/), combining storage incentives and swap payment channels.
 
-This repository contains:
+## Contracts
 
-- **Incentives Contracts** - Storage incentive mechanisms including postage stamps, staking, and redistribution
-- **Swap Contracts** - Payment channel (chequebook) contracts for the SWAP protocol
+- **Incentives** - Postage stamps, staking, redistribution (Schelling game), and storage pricing
+- **Swap** - Payment channel (chequebook) contracts for the SWAP protocol
 
-## Dependencies
+## Quick Start
 
-- [Solady](https://github.com/Vectorized/solady) - Gas-optimized Solidity utilities
+```bash
+# Install Foundry
+curl -L https://foundry.paradigm.xyz | bash && foundryup
 
-## Building
+# Clone and build
+git clone https://github.com/nxm-rs/swarm-contracts.git
+cd swarm-contracts
+forge install && forge build
 
-```shell
-forge build
-```
-
-## Testing
-
-```shell
+# Run tests
 forge test
 ```
 
-## Contract Structure
+## Project Structure
 
 ```
 src/
-├── common/           # Shared contracts
-│   └── TestToken.sol # Test ERC20 token
-├── incentives/       # Storage incentive contracts
+├── incentives/          # Storage incentive contracts
 │   ├── PostageStamp.sol
 │   ├── Staking.sol
 │   ├── Redistribution.sol
-│   ├── StoragePriceOracle.sol
-│   ├── interfaces/
-│   └── libraries/
-└── swap/             # Payment channel contracts
+│   └── StoragePriceOracle.sol
+└── swap/                # Payment channel contracts
     ├── ERC20SimpleSwap.sol
     ├── SimpleSwapFactory.sol
     └── SwapPriceOracle.sol
 ```
 
+## Deployment
+
+```bash
+# Local
+anvil &
+forge script script/DeployAll.s.sol --rpc-url localhost --broadcast
+
+# Testnet/Mainnet
+forge script script/DeployAll.s.sol --rpc-url $RPC_URL --broadcast --verify
+```
+
+## Dependencies
+
+- [Solady](https://github.com/Vectorized/solady) - Gas-optimized utilities
+
+## Related
+
+- [Swarm Docs](https://docs.ethswarm.org/)
+- [Bee Node](https://github.com/ethersphere/bee)
+
 ## License
 
-BSD-3-Clause
+[AGPL-3.0-or-later](LICENSE)
