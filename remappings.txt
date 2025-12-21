@@ -1,0 +1,6 @@
+forge-std/=lib/forge-std/src/
+solady/=lib/solady/src/
+@incentives/=src/incentives/
+@swap/=src/swap/
+@common/=src/common/
+@test/=test/helpers/
