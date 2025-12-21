@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Script, console} from "forge-std/Script.sol";
-import {PostageStamp} from "../src/incentives/PostageStamp.sol";
-import {PriceOracle} from "../src/incentives/StoragePriceOracle.sol";
-import {StakeRegistry} from "../src/incentives/Staking.sol";
-import {Redistribution} from "../src/incentives/Redistribution.sol";
+import { Script, console } from "forge-std/Script.sol";
+import { PostageStamp } from "../src/incentives/PostageStamp.sol";
+import { PriceOracle } from "../src/incentives/StoragePriceOracle.sol";
+import { StakeRegistry } from "../src/incentives/Staking.sol";
+import { Redistribution } from "../src/incentives/Redistribution.sol";
 
 /**
  * @title DeploySwarm
@@ -42,11 +42,8 @@ contract DeploySwarm is Script {
         console.log("StakeRegistry deployed at:", address(stakeRegistry));
 
         // 4. Deploy Redistribution
-        Redistribution redistribution = new Redistribution(
-            address(stakeRegistry),
-            address(postageStamp),
-            address(priceOracle)
-        );
+        Redistribution redistribution =
+            new Redistribution(address(stakeRegistry), address(postageStamp), address(priceOracle));
         console.log("Redistribution deployed at:", address(redistribution));
 
         // Configure roles

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {OwnableRoles} from "solady/auth/OwnableRoles.sol";
+import { OwnableRoles } from "solady/auth/OwnableRoles.sol";
 import "./libraries/OrderStatisticsTree.sol";
 
 interface IERC20 {
@@ -74,7 +74,7 @@ contract PostageStamp is OwnableRoles {
     uint64 public lastPrice;
 
     // blocks in 24 hours ~ 24 * 60 * 60 / 5 = 17280
-    uint64 public minimumValidityBlocks = 17280;
+    uint64 public minimumValidityBlocks = 17_280;
 
     // Block at which the last update occured.
     uint64 public lastUpdatedBlock;
@@ -143,7 +143,7 @@ contract PostageStamp is OwnableRoles {
     /**
      *@dev Emitted on every batch failed in bulk batch creation
      */
-    event CopyBatchFailed(uint index, bytes32 batchId);
+    event CopyBatchFailed(uint256 index, bytes32 batchId);
 
     /**
      * @dev Emitted when the pause is triggered.
@@ -331,20 +331,19 @@ contract PostageStamp is OwnableRoles {
      * @param bulkBatches array of batches
      */
     function copyBatchBulk(ImportBatch[] calldata bulkBatches) external onlyOwner {
-        for (uint i = 0; i < bulkBatches.length; i++) {
+        for (uint256 i = 0; i < bulkBatches.length; i++) {
             ImportBatch memory _batch = bulkBatches[i];
-            try
-                this.copyBatch(
-                    _batch.owner,
-                    _batch.remainingBalance,
-                    _batch.depth,
-                    _batch.bucketDepth,
-                    _batch.batchId,
-                    _batch.immutableFlag
-                )
-            {
-                // Successful copyBatch call
-            } catch {
+            try this.copyBatch(
+                _batch.owner,
+                _batch.remainingBalance,
+                _batch.depth,
+                _batch.bucketDepth,
+                _batch.batchId,
+                _batch.immutableFlag
+            ) {
+            // Successful copyBatch call
+            }
+            catch {
                 // copyBatch failed, handle error
                 emit CopyBatchFailed(i, _batch.batchId);
             }
@@ -462,7 +461,7 @@ contract PostageStamp is OwnableRoles {
         // the lower bound of the normalised balance for which we will check if batches have expired
         uint256 _lastExpiryBalance = lastExpiryBalance;
         uint256 i;
-        for (i; i < limit; ) {
+        for (i; i < limit;) {
             if (isBatchesTreeEmpty()) {
                 lastExpiryBalance = currentTotalOutPayment();
                 break;

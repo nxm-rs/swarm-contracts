@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {OwnableRoles} from "solady/auth/OwnableRoles.sol";
+import { OwnableRoles } from "solady/auth/OwnableRoles.sol";
 import "./interfaces/IPostageStamp.sol";
 
 /**
@@ -31,15 +31,17 @@ contract PriceOracle is OwnableRoles {
     uint64 public lastAdjustedRound;
 
     // The minimum price allowed
-    uint32 public minimumPriceUpscaled = 24000 << 10; // we upscale it by 2^10
+    uint32 public minimumPriceUpscaled = 24_000 << 10; // we upscale it by 2^10
 
     // The priceBase to modulate the price
-    uint32 public priceBase = 1048576;
+    uint32 public priceBase = 1_048_576;
 
     uint64 public currentPriceUpScaled = minimumPriceUpscaled;
 
     // Constants used to modulate the price, see below usage
-    uint32[9] public changeRate = [1049417, 1049206, 1048996, 1048786, 1048576, 1048366, 1048156, 1047946, 1047736];
+    uint32[9] public changeRate = [
+        1_049_417, 1_049_206, 1_048_996, 1_048_786, 1_048_576, 1_048_366, 1_048_156, 1_047_946, 1_047_736
+    ];
 
     // The length of a round in blocks.
     uint8 private constant ROUND_LENGTH = 152;
@@ -87,9 +89,8 @@ contract PriceOracle is OwnableRoles {
         currentPriceUpScaled = _currentPriceUpScaled;
 
         // Check if the setting of price in postagestamp succeded
-        (bool success, ) = address(postageStamp).call(
-            abi.encodeWithSignature("setPrice(uint256)", uint256(currentPrice()))
-        );
+        (bool success,) =
+            address(postageStamp).call(abi.encodeWithSignature("setPrice(uint256)", uint256(currentPrice())));
         if (!success) {
             emit StampPriceUpdateFailed(currentPrice());
             return false;
@@ -146,9 +147,8 @@ contract PriceOracle is OwnableRoles {
             lastAdjustedRound = currentRoundNumber;
 
             // Check if the price set in postagestamp succeded
-            (bool success, ) = address(postageStamp).call(
-                abi.encodeWithSignature("setPrice(uint256)", uint256(currentPrice()))
-            );
+            (bool success,) =
+                address(postageStamp).call(abi.encodeWithSignature("setPrice(uint256)", uint256(currentPrice())));
             if (!success) {
                 emit StampPriceUpdateFailed(currentPrice());
                 return false;

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Script, console} from "forge-std/Script.sol";
-import {TestToken} from "../src/common/TestToken.sol";
-import {PostageStamp} from "../src/incentives/PostageStamp.sol";
-import {PriceOracle} from "../src/incentives/StoragePriceOracle.sol";
-import {StakeRegistry} from "../src/incentives/Staking.sol";
-import {Redistribution} from "../src/incentives/Redistribution.sol";
-import {SimpleSwapFactory} from "../src/swap/SimpleSwapFactory.sol";
+import { Script, console } from "forge-std/Script.sol";
+import { TestToken } from "../src/common/TestToken.sol";
+import { PostageStamp } from "../src/incentives/PostageStamp.sol";
+import { PriceOracle } from "../src/incentives/StoragePriceOracle.sol";
+import { StakeRegistry } from "../src/incentives/Staking.sol";
+import { Redistribution } from "../src/incentives/Redistribution.sol";
+import { SimpleSwapFactory } from "../src/swap/SimpleSwapFactory.sol";
 
 /**
  * @title DeployAll
@@ -81,11 +81,9 @@ contract DeployAll is Script {
         console.log("SimpleSwapFactory:", swapFactory);
     }
 
-    function _configureRoles(
-        PostageStamp postageContract,
-        PriceOracle oracleContract,
-        StakeRegistry stakeContract
-    ) internal {
+    function _configureRoles(PostageStamp postageContract, PriceOracle oracleContract, StakeRegistry stakeContract)
+        internal
+    {
         console.log("");
         console.log("Configuring roles...");
 

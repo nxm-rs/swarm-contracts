@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Script, console} from "forge-std/Script.sol";
-import {SimpleSwapFactory} from "../src/swap/SimpleSwapFactory.sol";
+import { Script, console } from "forge-std/Script.sol";
+import { SimpleSwapFactory } from "../src/swap/SimpleSwapFactory.sol";
 
 /**
  * @title DeploySwap

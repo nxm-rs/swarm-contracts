@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {DeploySwap} from "../../script/DeploySwap.s.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
-import {SimpleSwapFactory} from "../../src/swap/SimpleSwapFactory.sol";
-import {ERC20SimpleSwap} from "../../src/swap/ERC20SimpleSwap.sol";
+import { Test } from "forge-std/Test.sol";
+import { DeploySwap } from "../../script/DeploySwap.s.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
+import { SimpleSwapFactory } from "../../src/swap/SimpleSwapFactory.sol";
+import { ERC20SimpleSwap } from "../../src/swap/ERC20SimpleSwap.sol";
 
 contract DeploySwapTest is Test {
     DeploySwap public deployer;
@@ -119,18 +119,16 @@ contract DeploySwapIntegrationTest is Test {
     }
 
     // Helper function to sign a cheque using EIP-712
-    function signCheque(
-        uint256 privateKey,
-        address chequebook,
-        address _beneficiary,
-        uint256 cumulativePayout
-    ) internal view returns (bytes memory) {
+    function signCheque(uint256 privateKey, address chequebook, address _beneficiary, uint256 cumulativePayout)
+        internal
+        view
+        returns (bytes memory)
+    {
         bytes32 DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId)");
         bytes32 CHEQUE_TYPEHASH = keccak256("Cheque(address chequebook,address beneficiary,uint256 cumulativePayout)");
 
-        bytes32 domainSeparator = keccak256(
-            abi.encode(DOMAIN_TYPEHASH, keccak256("Chequebook"), keccak256("1.0"), block.chainid)
-        );
+        bytes32 domainSeparator =
+            keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256("Chequebook"), keccak256("1.0"), block.chainid));
 
         bytes32 structHash = keccak256(abi.encode(CHEQUE_TYPEHASH, chequebook, _beneficiary, cumulativePayout));
 

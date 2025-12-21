@@ -4,13 +4,14 @@ pragma solidity ^0.8.30;
 library Signatures {
     error InvalidSignatureLength();
 
-    /** Hash of the message to sign */
-    function getPostageMessageHash(
-        bytes32 _chunkAddr,
-        bytes32 _batchId,
-        uint64 _index,
-        uint64 _timeStamp
-    ) internal pure returns (bytes32) {
+    /**
+     * Hash of the message to sign
+     */
+    function getPostageMessageHash(bytes32 _chunkAddr, bytes32 _batchId, uint64 _index, uint64 _timeStamp)
+        internal
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encodePacked(_chunkAddr, _batchId, _index, _timeStamp));
     }
 
@@ -39,7 +40,11 @@ library Signatures {
     function recoverSigner(
         bytes32 _ethSignedMessageHash, // it has to be prefixed message: https://ethereum.stackexchange.com/questions/19582/does-ecrecover-in-solidity-expects-the-x19ethereum-signed-message-n-prefix/21037
         bytes memory _signature
-    ) internal pure returns (address) {
+    )
+        internal
+        pure
+        returns (address)
+    {
         (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
 
         return ecrecover(_ethSignedMessageHash, v, r, s);
@@ -79,7 +84,11 @@ library Signatures {
         bytes memory _signature,
         bytes32 _identifier,
         bytes32 _chunkAddr
-    ) internal pure returns (bool) {
+    )
+        internal
+        pure
+        returns (bool)
+    {
         bytes32 messageHash = getSocMessageHash(_identifier, _chunkAddr);
         bytes32 ethMessageHash = getEthSignedMessageHash(messageHash);
 

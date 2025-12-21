@@ -18,9 +18,7 @@ interface IPostageStamp {
 
     function minimumInitialBalancePerChunk() external view returns (uint256);
 
-    function batches(
-        bytes32
-    )
+    function batches(bytes32)
         external
         view
         returns (

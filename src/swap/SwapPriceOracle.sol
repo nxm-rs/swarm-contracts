@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Ownable} from "solady/auth/Ownable.sol";
+import { Ownable } from "solady/auth/Ownable.sol";
 
 /**
  * @title PriceOracle contract

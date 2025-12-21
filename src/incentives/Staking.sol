@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {OwnableRoles} from "solady/auth/OwnableRoles.sol";
+import { OwnableRoles } from "solady/auth/OwnableRoles.sol";
 
 interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
@@ -49,7 +49,7 @@ contract StakeRegistry is OwnableRoles {
     uint64 NetworkId;
 
     // The miniumum stake allowed to be staked using the Staking contract.
-    uint64 private constant MIN_STAKE = 100000000000000000;
+    uint64 private constant MIN_STAKE = 100_000_000_000_000_000;
 
     // Address of the staked ERC20 token
     address public immutable bzzToken;
@@ -194,12 +194,7 @@ contract StakeRegistry is OwnableRoles {
         if (_addAmount > 0) {
             if (!IERC20(bzzToken).transferFrom(msg.sender, address(this), _addAmount)) revert TransferFailed();
             emit StakeUpdated(
-                msg.sender,
-                updatedCommittedStake,
-                updatedPotentialStake,
-                _newOverlay,
-                block.number,
-                _height
+                msg.sender, updatedCommittedStake, updatedPotentialStake, _newOverlay, block.number, _height
             );
         }
 
@@ -214,8 +209,8 @@ contract StakeRegistry is OwnableRoles {
      */
     function withdrawFromStake() external {
         uint256 _potentialStake = stakes[msg.sender].potentialStake;
-        uint256 _surplusStake = _potentialStake -
-            calculateEffectiveStake(stakes[msg.sender].committedStake, _potentialStake, stakes[msg.sender].height);
+        uint256 _surplusStake = _potentialStake
+            - calculateEffectiveStake(stakes[msg.sender].committedStake, _potentialStake, stakes[msg.sender].height);
 
         if (_surplusStake > 0) {
             stakes[msg.sender].potentialStake -= _surplusStake;
@@ -271,7 +266,7 @@ contract StakeRegistry is OwnableRoles {
 
     /**
      * @dev Pause the contract. The contract is provably stopped by renouncing
-     the pauser role and the admin role after pausing, can only be called by the owner
+     *  the pauser role and the admin role after pausing, can only be called by the owner
      */
     function pause() public onlyOwner whenNotPaused {
         _paused = true;
@@ -312,14 +307,11 @@ contract StakeRegistry is OwnableRoles {
      * @param _owner _owner of node
      */
     function nodeEffectiveStake(address _owner) public view returns (uint256) {
-        return
-            addressNotFrozen(_owner)
-                ? calculateEffectiveStake(
-                    stakes[_owner].committedStake,
-                    stakes[_owner].potentialStake,
-                    stakes[_owner].height
-                )
-                : 0;
+        return addressNotFrozen(_owner)
+            ? calculateEffectiveStake(
+                stakes[_owner].committedStake, stakes[_owner].potentialStake, stakes[_owner].height
+            )
+            : 0;
     }
 
     /**
@@ -327,9 +319,8 @@ contract StakeRegistry is OwnableRoles {
      */
     function withdrawableStake() public view returns (uint256) {
         uint256 _potentialStake = stakes[msg.sender].potentialStake;
-        return
-            _potentialStake -
-            calculateEffectiveStake(stakes[msg.sender].committedStake, _potentialStake, stakes[msg.sender].height);
+        return _potentialStake
+            - calculateEffectiveStake(stakes[msg.sender].committedStake, _potentialStake, stakes[msg.sender].height);
     }
 
     /**
@@ -355,11 +346,11 @@ contract StakeRegistry is OwnableRoles {
         return stakes[_owner].height;
     }
 
-    function calculateEffectiveStake(
-        uint256 committedStake,
-        uint256 potentialStakeBalance,
-        uint8 height
-    ) internal view returns (uint256) {
+    function calculateEffectiveStake(uint256 committedStake, uint256 potentialStakeBalance, uint8 height)
+        internal
+        view
+        returns (uint256)
+    {
         // Calculate the product of committedStake and unitPrice to get price in BZZ
         uint256 committedStakeBzz = (2 ** height) * committedStake * OracleContract.currentPrice();
 

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {StakeRegistry} from "../../src/incentives/Staking.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
+import { Test } from "forge-std/Test.sol";
+import { StakeRegistry } from "../../src/incentives/Staking.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
 
 // Mock price oracle for testing
 contract MockPriceOracle {
-    uint32 public price = 24000;
+    uint32 public price = 24_000;
 
     function currentPrice() external view returns (uint32) {
         return price;
@@ -29,7 +29,7 @@ contract StakingTest is Test {
     address internal alice;
 
     uint64 internal constant NETWORK_ID = 1;
-    uint256 internal constant MIN_STAKE = 100000000000000000; // 0.1 ether
+    uint256 internal constant MIN_STAKE = 100_000_000_000_000_000; // 0.1 ether
     uint256 internal constant INITIAL_BALANCE = 1_000_000 ether;
 
     function setUp() public {

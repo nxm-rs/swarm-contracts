@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {OwnableRoles} from "solady/auth/OwnableRoles.sol";
+import { OwnableRoles } from "solady/auth/OwnableRoles.sol";
 import "./libraries/TransformedBMTChunk.sol";
 import "./libraries/BMTChunk.sol";
 import "./libraries/Signatures.sol";
@@ -71,6 +71,7 @@ contract Redistribution is OwnableRoles {
         bytes32 obfuscatedHash;
         uint256 revealIndex;
     }
+
     // ...then provide the actual values that are the constituents of the pre-image of the _obfuscatedHash_
     // during the reveal phase.
     struct Reveal {
@@ -147,7 +148,8 @@ contract Redistribution is OwnableRoles {
     uint8 private penaltyRandomFactor = 100; // Use 100 as value to ignore random factor in freezing penalty
 
     // alpha=0.097612 beta=0.0716570 k=16
-    uint256 private sampleMaxValue = 1284401000000000000000000000000000000000000000000000000000000000000000000;
+    uint256 private sampleMaxValue =
+        1_284_401_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000_000;
 
     // The reveal of the winner of the last round.
     Reveal public winner;
@@ -356,7 +358,7 @@ contract Redistribution is OwnableRoles {
 
         uint256 commitsArrayLength = currentCommits.length;
 
-        for (uint256 i = 0; i < commitsArrayLength; ) {
+        for (uint256 i = 0; i < commitsArrayLength;) {
             if (currentCommits[i].overlay == _overlay) {
                 revert AlreadyCommitted();
             }
@@ -510,9 +512,8 @@ contract Redistribution is OwnableRoles {
         estimateSize(entryProofLast.proofSegments[0]);
 
         // Do the check if the withdraw was success
-        (bool success, ) = address(PostageContract).call(
-            abi.encodeWithSignature("withdraw(address)", winnerSelected.owner)
-        );
+        (bool success,) =
+            address(PostageContract).call(abi.encodeWithSignature("withdraw(address)", winnerSelected.owner));
         if (!success) {
             emit WithdrawFailed(winnerSelected.owner);
         }
@@ -552,16 +553,15 @@ contract Redistribution is OwnableRoles {
         emit TruthSelected(truthRevealedHash, truthRevealedDepth);
         string memory winnerSelectionAnchor = currentWinnerSelectionAnchor();
 
-        for (uint256 i = 0; i < currentCommitsLength; ) {
+        for (uint256 i = 0; i < currentCommitsLength;) {
             Commit memory currentCommit = currentCommits[i];
             uint256 revIndex = currentCommit.revealIndex;
             Reveal memory currentReveal = currentReveals[revIndex];
 
             // Select winner with valid truth
             if (
-                currentCommit.revealed &&
-                truthRevealedHash == currentReveal.hash &&
-                truthRevealedDepth == currentReveal.depth
+                currentCommit.revealed && truthRevealedHash == currentReveal.hash
+                    && truthRevealedDepth == currentReveal.depth
             ) {
                 currentWinnerSelectionSum += currentReveal.stakeDensity;
                 randomNumber = keccak256(abi.encodePacked(winnerSelectionAnchor, redundancyCount));
@@ -576,13 +576,12 @@ contract Redistribution is OwnableRoles {
 
             // Freeze deposit if any truth is false, make it a penaltyRandomFactor chance for this to happen
             if (
-                currentCommit.revealed &&
-                (truthRevealedHash != currentReveal.hash || truthRevealedDepth != currentReveal.depth) &&
-                (block.prevrandao % 100 < penaltyRandomFactor)
+                currentCommit.revealed
+                    && (truthRevealedHash != currentReveal.hash || truthRevealedDepth != currentReveal.depth)
+                    && (block.prevrandao % 100 < penaltyRandomFactor)
             ) {
                 Stakes.freezeDeposit(
-                    currentReveal.owner,
-                    penaltyMultiplierDisagreement * ROUND_LENGTH * uint256(2 ** truthRevealedDepth)
+                    currentReveal.owner, penaltyMultiplierDisagreement * ROUND_LENGTH * uint256(2 ** truthRevealedDepth)
                 );
             }
 
@@ -591,8 +590,7 @@ contract Redistribution is OwnableRoles {
                 // slash in later phase (ph5)
                 // Stakes.slashDeposit(currentCommits[i].overlay, currentCommits[i].stake);
                 Stakes.freezeDeposit(
-                    currentCommit.owner,
-                    penaltyMultiplierNonRevealed * ROUND_LENGTH * uint256(2 ** truthRevealedDepth)
+                    currentCommit.owner, penaltyMultiplierNonRevealed * ROUND_LENGTH * uint256(2 ** truthRevealedDepth)
                 );
             }
             unchecked {
@@ -620,13 +618,10 @@ contract Redistribution is OwnableRoles {
         emit transformedChunkAddressFromInclusionProof(indexInRC, calculatedTransformedAddr);
 
         if (
-            winner.hash !=
-            BMTChunk.chunkAddressFromInclusionProof(
-                entryProof.proofSegments,
-                entryProof.proveSegment,
-                indexInRC,
-                32 * 32
-            )
+            winner.hash
+                != BMTChunk.chunkAddressFromInclusionProof(
+                    entryProof.proofSegments, entryProof.proveSegment, indexInRC, 32 * 32
+                )
         ) {
             revert InclusionProofFailed(1, calculatedTransformedAddr);
         }
@@ -636,17 +631,14 @@ contract Redistribution is OwnableRoles {
         }
 
         bytes32 originalAddress = entryProof.socProof.length > 0
-            ? entryProof.socProof[0].chunkAddr // soc attestation in socFunction
+            ? entryProof.socProof[0].chunkAddr  // soc attestation in socFunction
             : entryProof.proveSegment;
 
         if (
-            originalAddress !=
-            BMTChunk.chunkAddressFromInclusionProof(
-                entryProof.proofSegments2,
-                entryProof.proveSegment2,
-                randomChunkSegmentIndex,
-                entryProof.chunkSpan
-            )
+            originalAddress
+                != BMTChunk.chunkAddressFromInclusionProof(
+                    entryProof.proofSegments2, entryProof.proveSegment2, randomChunkSegmentIndex, entryProof.chunkSpan
+                )
         ) {
             revert InclusionProofFailed(3, calculatedTransformedAddr);
         }
@@ -695,8 +687,8 @@ contract Redistribution is OwnableRoles {
     }
 
     /**
-    * @dev Pause the contract. The contract is provably stopped by renouncing
-     the pauser role and the admin role after pausing, can only be called by the owner
+     * @dev Pause the contract. The contract is provably stopped by renouncing
+     *  the pauser role and the admin role after pausing, can only be called by the owner
      */
     function pause() public onlyOwner whenNotPaused {
         _paused = true;
@@ -891,7 +883,7 @@ contract Redistribution is OwnableRoles {
      * @dev
      */
     function findCommit(bytes32 _overlay, bytes32 _obfuscatedHash) internal view returns (uint256) {
-        for (uint256 i = 0; i < currentCommits.length; ) {
+        for (uint256 i = 0; i < currentCommits.length;) {
             if (currentCommits[i].overlay == _overlay && _obfuscatedHash == currentCommits[i].obfuscatedHash) {
                 return i;
             }
@@ -910,12 +902,11 @@ contract Redistribution is OwnableRoles {
      * @param _hash The reserve commitment hash.
      * @param revealNonce A random, single use, secret nonce.
      */
-    function wrapCommit(
-        bytes32 _overlay,
-        uint8 _depth,
-        bytes32 _hash,
-        bytes32 revealNonce
-    ) public pure returns (bytes32) {
+    function wrapCommit(bytes32 _overlay, uint8 _depth, bytes32 _hash, bytes32 revealNonce)
+        public
+        pure
+        returns (bytes32)
+    {
         return keccak256(abi.encodePacked(_overlay, _depth, _hash, revealNonce));
     }
 
@@ -968,7 +959,7 @@ contract Redistribution is OwnableRoles {
         string memory truthSelectionAnchor = currentTruthSelectionAnchor();
         uint256 commitsArrayLength = currentCommits.length;
 
-        for (uint256 i = 0; i < commitsArrayLength; ) {
+        for (uint256 i = 0; i < commitsArrayLength;) {
             if (currentCommits[i].revealed) {
                 revIndex = currentCommits[i].revealIndex;
                 currentSum += currentReveals[revIndex].stakeDensity;
@@ -1027,22 +1018,21 @@ contract Redistribution is OwnableRoles {
         (truthRevealedHash, truthRevealedDepth) = getCurrentTruth();
         uint256 commitsArrayLength = currentCommits.length;
 
-        for (uint256 i = 0; i < commitsArrayLength; ) {
+        for (uint256 i = 0; i < commitsArrayLength;) {
             revIndex = currentCommits[i].revealIndex;
 
             // Deterministically read winner
             if (
-                currentCommits[i].revealed &&
-                truthRevealedHash == currentReveals[revIndex].hash &&
-                truthRevealedDepth == currentReveals[revIndex].depth
+                currentCommits[i].revealed && truthRevealedHash == currentReveals[revIndex].hash
+                    && truthRevealedDepth == currentReveals[revIndex].depth
             ) {
                 currentWinnerSelectionSum += currentReveals[revIndex].stakeDensity;
                 randomNumber = keccak256(abi.encodePacked(winnerSelectionAnchor, redundancyCount));
                 randomNumberTrunc = uint256(randomNumber & MAX_H);
 
                 if (
-                    randomNumberTrunc * currentWinnerSelectionSum <
-                    currentReveals[revIndex].stakeDensity * (uint256(MAX_H) + 1)
+                    randomNumberTrunc * currentWinnerSelectionSum
+                        < currentReveals[revIndex].stakeDensity * (uint256(MAX_H) + 1)
                 ) {
                     winnerIs = currentReveals[revIndex].overlay;
                 }
@@ -1062,20 +1052,18 @@ contract Redistribution is OwnableRoles {
     function socFunction(ChunkInclusionProof calldata entryProof) internal pure {
         if (entryProof.socProof.length == 0) return;
 
-        if (
-            !Signatures.socVerify(
+        if (!Signatures.socVerify(
                 entryProof.socProof[0].signer, // signer Ethereum address to check against
                 entryProof.socProof[0].signature,
                 entryProof.socProof[0].identifier,
                 entryProof.socProof[0].chunkAddr
-            )
-        ) {
+            )) {
             revert SocVerificationFailed(entryProof.socProof[0].chunkAddr);
         }
 
         if (
-            calculateSocAddress(entryProof.socProof[0].identifier, entryProof.socProof[0].signer) !=
-            entryProof.proveSegment
+            calculateSocAddress(entryProof.socProof[0].identifier, entryProof.socProof[0].signer)
+                != entryProof.proveSegment
         ) {
             revert SocCalcNotMatching(entryProof.socProof[0].chunkAddr);
         }
@@ -1083,9 +1071,8 @@ contract Redistribution is OwnableRoles {
 
     function stampFunction(ChunkInclusionProof calldata entryProof) internal view {
         // authentic
-        (address batchOwner, uint8 batchDepth, uint8 bucketDepth, , , ) = PostageContract.batches(
-            entryProof.postageProof.postageId
-        );
+        (address batchOwner, uint8 batchDepth, uint8 bucketDepth,,,) =
+            PostageContract.batches(entryProof.postageProof.postageId);
 
         // alive
         if (batchOwner == address(0)) {
@@ -1107,16 +1094,14 @@ contract Redistribution is OwnableRoles {
         }
 
         // authorized
-        if (
-            !Signatures.postageVerify(
+        if (!Signatures.postageVerify(
                 batchOwner,
                 entryProof.postageProof.signature,
                 entryProof.proveSegment,
                 entryProof.postageProof.postageId,
                 entryProof.postageProof.index,
                 entryProof.postageProof.timeStamp
-            )
-        ) {
+            )) {
             revert SigRecoveryFailed(entryProof.postageProof.postageId);
         }
     }

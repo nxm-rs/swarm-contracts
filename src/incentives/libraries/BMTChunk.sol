@@ -17,22 +17,20 @@ library BMTChunk {
         uint256 v = _b;
 
         // swap bytes
-        v =
-            ((v >> 8) & 0x00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF) |
-            ((v & 0x00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF) << 8);
+        v = ((v >> 8) & 0x00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF)
+            | ((v & 0x00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF) << 8);
         // swap 2-byte long pairs
-        v =
-            ((v >> 16) & 0x0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF) |
-            ((v & 0x0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF) << 16);
+        v = ((v >> 16) & 0x0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF)
+            | ((v & 0x0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF) << 16);
         // swap 4-byte long pairs
-        v =
-            ((v >> 32) & 0x00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF) |
-            ((v & 0x00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF) << 32);
+        v = ((v >> 32) & 0x00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF)
+            | ((v & 0x00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF00000000FFFFFFFF) << 32);
 
         return uint64(v);
     }
 
-    /** Calculates the root hash from the provided inclusion proof segments and its corresponding segment index
+    /**
+     * Calculates the root hash from the provided inclusion proof segments and its corresponding segment index
      * @param _proofSegments Proof segments.
      * @param _proveSegment Segment to prove.
      * @param _proveSegmentIndex Prove segment index
@@ -74,11 +72,11 @@ library BMTChunk {
         return keccak256(abi.encodePacked(reverseUint64(_chunkSpan), rootHash));
     }
 
-    function mergeSegment(
-        bytes32 _calculatedHash,
-        bytes32 _proofSegment,
-        bool mergeFromRight
-    ) internal pure returns (bytes32 res) {
+    function mergeSegment(bytes32 _calculatedHash, bytes32 _proofSegment, bool mergeFromRight)
+        internal
+        pure
+        returns (bytes32 res)
+    {
         if (mergeFromRight) {
             res = keccak256(abi.encode(_calculatedHash, _proofSegment));
         } else {

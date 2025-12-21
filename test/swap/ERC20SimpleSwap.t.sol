@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test, console} from "forge-std/Test.sol";
-import {ERC20SimpleSwap} from "../../src/swap/ERC20SimpleSwap.sol";
-import {SimpleSwapFactory} from "../../src/swap/SimpleSwapFactory.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
-import {EIP712Helper} from "../helpers/EIP712Helper.sol";
+import { Test, console } from "forge-std/Test.sol";
+import { ERC20SimpleSwap } from "../../src/swap/ERC20SimpleSwap.sol";
+import { SimpleSwapFactory } from "../../src/swap/SimpleSwapFactory.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
+import { EIP712Helper } from "../helpers/EIP712Helper.sol";
 
 contract ERC20SimpleSwapTest is Test, EIP712Helper {
     ERC20SimpleSwap public swap;

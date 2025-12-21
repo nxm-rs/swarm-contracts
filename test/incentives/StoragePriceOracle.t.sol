@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {PriceOracle} from "../../src/incentives/StoragePriceOracle.sol";
-import {PostageStamp} from "../../src/incentives/PostageStamp.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
+import { Test } from "forge-std/Test.sol";
+import { PriceOracle } from "../../src/incentives/StoragePriceOracle.sol";
+import { PostageStamp } from "../../src/incentives/PostageStamp.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
 
 contract StoragePriceOracleTest is Test {
     PriceOracle public oracle;
@@ -50,7 +50,7 @@ contract StoragePriceOracleTest is Test {
 
     function test_constructor_setsInitialPrice() public view {
         // Initial price should be minimum price (24000)
-        assertEq(oracle.currentPrice(), 24000);
+        assertEq(oracle.currentPrice(), 24_000);
     }
 
     function test_constructor_setsLastAdjustedRound() public view {
@@ -63,11 +63,11 @@ contract StoragePriceOracleTest is Test {
     function test_setPrice_onlyOwner() public {
         vm.prank(alice);
         vm.expectRevert();
-        oracle.setPrice(50000);
+        oracle.setPrice(50_000);
     }
 
     function test_setPrice_updatesPrice() public {
-        uint32 newPrice = 50000;
+        uint32 newPrice = 50_000;
 
         vm.prank(deployer);
         oracle.setPrice(newPrice);
@@ -86,7 +86,7 @@ contract StoragePriceOracleTest is Test {
     }
 
     function test_setPrice_updatesPostageStamp() public {
-        uint32 newPrice = 50000;
+        uint32 newPrice = 50_000;
 
         vm.prank(deployer);
         oracle.setPrice(newPrice);
@@ -134,7 +134,7 @@ contract StoragePriceOracleTest is Test {
     function test_adjustPrice_decreasesWithHighRedundancy() public {
         // First set a higher price so we have room to decrease
         vm.prank(deployer);
-        oracle.setPrice(50000);
+        oracle.setPrice(50_000);
 
         vm.roll(block.number + ROUND_LENGTH);
 
@@ -171,7 +171,7 @@ contract StoragePriceOracleTest is Test {
     function test_adjustPrice_capsRedundancy() public {
         // Set a high initial price first
         vm.prank(deployer);
-        oracle.setPrice(50000);
+        oracle.setPrice(50_000);
 
         // Move to next round
         vm.roll(block.number + ROUND_LENGTH);
@@ -190,7 +190,7 @@ contract StoragePriceOracleTest is Test {
     function test_adjustPrice_increasesOnSkippedRounds() public {
         // Set initial price
         vm.prank(deployer);
-        oracle.setPrice(30000);
+        oracle.setPrice(30_000);
 
         // Skip several rounds
         vm.roll(block.number + ROUND_LENGTH * 5);
@@ -268,6 +268,6 @@ contract StoragePriceOracleTest is Test {
 
     function test_minimumPrice_returnsCorrectValue() public view {
         // Minimum price is 24000
-        assertEq(oracle.minimumPrice(), 24000);
+        assertEq(oracle.minimumPrice(), 24_000);
     }
 }

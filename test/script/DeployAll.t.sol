@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {DeployAll} from "../../script/DeployAll.s.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
-import {PostageStamp} from "../../src/incentives/PostageStamp.sol";
-import {PriceOracle} from "../../src/incentives/StoragePriceOracle.sol";
-import {StakeRegistry} from "../../src/incentives/Staking.sol";
-import {Redistribution} from "../../src/incentives/Redistribution.sol";
-import {SimpleSwapFactory} from "../../src/swap/SimpleSwapFactory.sol";
+import { Test } from "forge-std/Test.sol";
+import { DeployAll } from "../../script/DeployAll.s.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
+import { PostageStamp } from "../../src/incentives/PostageStamp.sol";
+import { PriceOracle } from "../../src/incentives/StoragePriceOracle.sol";
+import { StakeRegistry } from "../../src/incentives/Staking.sol";
+import { Redistribution } from "../../src/incentives/Redistribution.sol";
+import { SimpleSwapFactory } from "../../src/swap/SimpleSwapFactory.sol";
 
 contract DeployAllTest is Test {
     DeployAll public deployer;
@@ -121,10 +121,10 @@ contract DeployAllTest is Test {
 
         // Owner should be able to set price
         vm.prank(deployerAddr);
-        oracle.setPrice(50000);
+        oracle.setPrice(50_000);
 
-        assertEq(oracle.currentPrice(), 50000, "Oracle price not updated");
-        assertEq(postage.lastPrice(), 50000, "PostageStamp price not updated");
+        assertEq(oracle.currentPrice(), 50_000, "Oracle price not updated");
+        assertEq(postage.lastPrice(), 50_000, "PostageStamp price not updated");
     }
 
     function test_run_redistributionCanFreezeStakes() public {

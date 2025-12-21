@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {PostageStamp} from "../../src/incentives/PostageStamp.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
+import { Test } from "forge-std/Test.sol";
+import { PostageStamp } from "../../src/incentives/PostageStamp.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
 
 contract PostageStampTest is Test {
     PostageStamp public postage;
@@ -66,14 +66,7 @@ contract PostageStampTest is Test {
         uint256 balancePerChunk = postage.minimumInitialBalancePerChunk() + 1;
 
         vm.prank(stamper);
-        bytes32 batchId = postage.createBatch(
-            stamper,
-            balancePerChunk,
-            depth,
-            bucketDepth,
-            nonce,
-            false
-        );
+        bytes32 batchId = postage.createBatch(stamper, balancePerChunk, depth, bucketDepth, nonce, false);
 
         assertEq(postage.batchOwner(batchId), stamper);
         assertEq(postage.batchDepth(batchId), depth);

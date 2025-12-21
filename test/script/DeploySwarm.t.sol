@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity ^0.8.30;
 
-import {Test} from "forge-std/Test.sol";
-import {DeploySwarm} from "../../script/DeploySwarm.s.sol";
-import {TestToken} from "../../src/common/TestToken.sol";
-import {PostageStamp} from "../../src/incentives/PostageStamp.sol";
-import {PriceOracle} from "../../src/incentives/StoragePriceOracle.sol";
-import {StakeRegistry} from "../../src/incentives/Staking.sol";
-import {Redistribution} from "../../src/incentives/Redistribution.sol";
+import { Test } from "forge-std/Test.sol";
+import { DeploySwarm } from "../../script/DeploySwarm.s.sol";
+import { TestToken } from "../../src/common/TestToken.sol";
+import { PostageStamp } from "../../src/incentives/PostageStamp.sol";
+import { PriceOracle } from "../../src/incentives/StoragePriceOracle.sol";
+import { StakeRegistry } from "../../src/incentives/Staking.sol";
+import { Redistribution } from "../../src/incentives/Redistribution.sol";
 
 contract DeploySwarmTest is Test {
     DeploySwarm public deployer;
@@ -60,7 +60,7 @@ contract DeploySwarmIntegrationTest is Test {
 
     uint64 internal constant NETWORK_ID = 100;
     uint8 internal constant MIN_BUCKET_DEPTH = 16;
-    uint256 internal constant MIN_STAKE = 100000000000000000;
+    uint256 internal constant MIN_STAKE = 100_000_000_000_000_000;
 
     PostageStamp public postageStamp;
     PriceOracle public priceOracle;
@@ -101,7 +101,7 @@ contract DeploySwarmIntegrationTest is Test {
     function test_fullIntegration_stakingWorks() public {
         // First set a price
         vm.prank(deployer);
-        priceOracle.setPrice(24000);
+        priceOracle.setPrice(24_000);
 
         // Stake tokens
         vm.prank(staker);
@@ -115,7 +115,7 @@ contract DeploySwarmIntegrationTest is Test {
     function test_fullIntegration_redistributionCanFreeze() public {
         // First set a price
         vm.prank(deployer);
-        priceOracle.setPrice(24000);
+        priceOracle.setPrice(24_000);
 
         // Stake tokens
         vm.prank(staker);
@@ -130,7 +130,7 @@ contract DeploySwarmIntegrationTest is Test {
     }
 
     function test_fullIntegration_priceOracleUpdatesPostageStamp() public {
-        uint32 newPrice = 50000;
+        uint32 newPrice = 50_000;
 
         vm.prank(deployer);
         priceOracle.setPrice(newPrice);
