@@ -39,9 +39,8 @@ contract PriceOracle is OwnableRoles {
     uint64 public currentPriceUpScaled = minimumPriceUpscaled;
 
     // Constants used to modulate the price, see below usage
-    uint32[9] public changeRate = [
-        1_049_417, 1_049_206, 1_048_996, 1_048_786, 1_048_576, 1_048_366, 1_048_156, 1_047_946, 1_047_736
-    ];
+    uint32[9] public changeRate =
+        [1_049_417, 1_049_206, 1_048_996, 1_048_786, 1_048_576, 1_048_366, 1_048_156, 1_047_946, 1_047_736];
 
     // The length of a round in blocks.
     uint8 private constant ROUND_LENGTH = 152;
