@@ -5,7 +5,8 @@ import { Test } from "forge-std/Test.sol";
 import { DeployAll } from "../../script/DeployAll.s.sol";
 import { TestToken } from "../../src/common/TestToken.sol";
 import { PostageStamp } from "../../src/incentives/PostageStamp.sol";
-import { PriceOracle } from "../../src/incentives/StoragePriceOracle.sol";
+import { PriceOracle as StoragePriceOracle } from "../../src/incentives/StoragePriceOracle.sol";
+import { PriceOracle as SwapPriceOracle } from "../../src/swap/SwapPriceOracle.sol";
 import { StakeRegistry } from "../../src/incentives/Staking.sol";
 import { Redistribution } from "../../src/incentives/Redistribution.sol";
 import { SimpleSwapFactory } from "../../src/swap/SimpleSwapFactory.sol";
@@ -28,7 +29,8 @@ contract DeployAllTest is Test {
 
         assertTrue(deployer.token() != address(0), "Token not deployed");
         assertTrue(deployer.postageStamp() != address(0), "PostageStamp not deployed");
-        assertTrue(deployer.priceOracle() != address(0), "PriceOracle not deployed");
+        assertTrue(deployer.storagePriceOracle() != address(0), "StoragePriceOracle not deployed");
+        assertTrue(deployer.swapPriceOracle() != address(0), "SwapPriceOracle not deployed");
         assertTrue(deployer.stakeRegistry() != address(0), "StakeRegistry not deployed");
         assertTrue(deployer.redistribution() != address(0), "Redistribution not deployed");
         assertTrue(deployer.swapFactory() != address(0), "SwapFactory not deployed");
@@ -39,10 +41,10 @@ contract DeployAllTest is Test {
 
         PostageStamp postage = PostageStamp(deployer.postageStamp());
 
-        // PriceOracle should have PRICE_ORACLE_ROLE
+        // StoragePriceOracle should have PRICE_ORACLE_ROLE
         assertTrue(
-            postage.hasAllRoles(deployer.priceOracle(), postage.PRICE_ORACLE_ROLE()),
-            "PriceOracle missing PRICE_ORACLE_ROLE on PostageStamp"
+            postage.hasAllRoles(deployer.storagePriceOracle(), postage.PRICE_ORACLE_ROLE()),
+            "StoragePriceOracle missing PRICE_ORACLE_ROLE on PostageStamp"
         );
 
         // Redistribution should have REDISTRIBUTOR_ROLE
@@ -64,15 +66,15 @@ contract DeployAllTest is Test {
         );
     }
 
-    function test_run_configuresPriceOracleRoles() public {
+    function test_run_configuresStoragePriceOracleRoles() public {
         deployer.run();
 
-        PriceOracle oracle = PriceOracle(deployer.priceOracle());
+        StoragePriceOracle oracle = StoragePriceOracle(deployer.storagePriceOracle());
 
         // Redistribution should have PRICE_UPDATER_ROLE
         assertTrue(
             oracle.hasAllRoles(deployer.redistribution(), oracle.PRICE_UPDATER_ROLE()),
-            "Redistribution missing PRICE_UPDATER_ROLE on PriceOracle"
+            "Redistribution missing PRICE_UPDATER_ROLE on StoragePriceOracle"
         );
     }
 
@@ -80,12 +82,14 @@ contract DeployAllTest is Test {
         deployer.run();
 
         PostageStamp postage = PostageStamp(deployer.postageStamp());
-        PriceOracle oracle = PriceOracle(deployer.priceOracle());
+        StoragePriceOracle storageOracle = StoragePriceOracle(deployer.storagePriceOracle());
+        SwapPriceOracle swapOracle = SwapPriceOracle(deployer.swapPriceOracle());
         StakeRegistry staking = StakeRegistry(deployer.stakeRegistry());
         Redistribution redist = Redistribution(deployer.redistribution());
 
         assertEq(postage.owner(), deployerAddr, "PostageStamp owner incorrect");
-        assertEq(oracle.owner(), deployerAddr, "PriceOracle owner incorrect");
+        assertEq(storageOracle.owner(), deployerAddr, "StoragePriceOracle owner incorrect");
+        assertEq(swapOracle.owner(), deployerAddr, "SwapPriceOracle owner incorrect");
         assertEq(staking.owner(), deployerAddr, "StakeRegistry owner incorrect");
         assertEq(redist.owner(), deployerAddr, "Redistribution owner incorrect");
     }
@@ -94,12 +98,12 @@ contract DeployAllTest is Test {
         deployer.run();
 
         PostageStamp postage = PostageStamp(deployer.postageStamp());
-        PriceOracle oracle = PriceOracle(deployer.priceOracle());
+        StoragePriceOracle oracle = StoragePriceOracle(deployer.storagePriceOracle());
         StakeRegistry staking = StakeRegistry(deployer.stakeRegistry());
 
         // Verify contract linkages
         assertEq(postage.bzzToken(), deployer.token(), "PostageStamp token mismatch");
-        assertEq(address(oracle.postageStamp()), deployer.postageStamp(), "PriceOracle postageStamp mismatch");
+        assertEq(address(oracle.postageStamp()), deployer.postageStamp(), "StoragePriceOracle postageStamp mismatch");
         assertEq(staking.bzzToken(), deployer.token(), "StakeRegistry token mismatch");
     }
 
@@ -113,10 +117,10 @@ contract DeployAllTest is Test {
         assertTrue(factory.master() != address(0), "Factory master not deployed");
     }
 
-    function test_run_priceOracleCanSetPrice() public {
+    function test_run_storagePriceOracleCanSetPrice() public {
         deployer.run();
 
-        PriceOracle oracle = PriceOracle(deployer.priceOracle());
+        StoragePriceOracle oracle = StoragePriceOracle(deployer.storagePriceOracle());
         PostageStamp postage = PostageStamp(deployer.postageStamp());
 
         // Owner should be able to set price
@@ -125,6 +129,24 @@ contract DeployAllTest is Test {
 
         assertEq(oracle.currentPrice(), 50_000, "Oracle price not updated");
         assertEq(postage.lastPrice(), 50_000, "PostageStamp price not updated");
+    }
+
+    function test_run_swapPriceOracleWorks() public {
+        deployer.run();
+
+        SwapPriceOracle oracle = SwapPriceOracle(deployer.swapPriceOracle());
+
+        // Verify initial values from deployment
+        (uint256 price, uint256 deduction) = oracle.getPrice();
+        assertEq(price, deployer.SWAP_INITIAL_PRICE(), "SwapPriceOracle initial price incorrect");
+        assertEq(deduction, deployer.SWAP_CHEQUE_VALUE_DEDUCTION(), "SwapPriceOracle initial deduction incorrect");
+
+        // Owner should be able to update price
+        vm.prank(deployerAddr);
+        oracle.updatePrice(20000);
+
+        (price, ) = oracle.getPrice();
+        assertEq(price, 20000, "SwapPriceOracle price not updated");
     }
 
     function test_run_redistributionCanFreezeStakes() public {
